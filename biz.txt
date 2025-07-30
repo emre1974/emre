@@ -1,0 +1,248 @@
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Image } from "next/image";
+
+const translations = {
+  nl: {
+    title: "Turks-Marokkaanse Relatie App",
+    name: "Naam",
+    age: "Leeftijd",
+    gender: "Geslacht (man/vrouw)",
+    culture: "Afkomst (Turks/Marokkaans)",
+    religion: "Geloof (bijv. Islam, Soennitisch, Sjiitisch)",
+    intent: "Intentie (bijv. huwelijk, kennismaking)",
+    message: "Stel jezelf kort voor...",
+    photo: "Profielfoto uploaden",
+    submit: "Profiel Aanmaken",
+    welcome: "Welkom",
+    profileCreated: "Je profiel is aangemaakt.",
+    intentInfo: "Je intentie is",
+    cultureInfo: "je bent van afkomst.",
+    matchesSoon: "Hier zijn enkele profielen die mogelijk bij je passen:",
+    chatIntro: "Je kunt binnenkort chatten met je matches!",
+    payTitle: "Privéchat kopen",
+    payIntro: "Voor toegang tot privéchat betaal je €2 per sessie.",
+    payOptions: "Kies een betaalmethode:",
+    payWithPaypal: "Betaal met PayPal",
+    payWithBank: "Of maak €2 over naar:",
+    bankDetails: "ASN Bank – NL91 SNSB 8833 7364 31 t.n.v. E. Yigit",
+    privacyNotice: "🛡️ Voor ieders veiligheid worden gesprekken veilig opgeslagen. Misbruik wordt aangepakt."
+  },
+  tr: {
+    title: "Türk-Fas İlişki Uygulaması",
+    name: "İsim",
+    age: "Yaş",
+    gender: "Cinsiyet (erkek/kadın)",
+    culture: "Köken (Türk/Faslı)",
+    religion: "Din (ör. İslam, Sünni, Şii)",
+    intent: "Niyet (ör. evlilik, tanışma)",
+    message: "Kendinizi kısaca tanıtın...",
+    photo: "Profil fotoğrafı yükle",
+    submit: "Profil Oluştur",
+    welcome: "Hoş geldiniz",
+    profileCreated: "Profiliniz oluşturuldu.",
+    intentInfo: "Niyetiniz",
+    cultureInfo: "kökeniniz",
+    matchesSoon: "İşte size uygun bazı profiller:",
+    chatIntro: "Yakında eşleşmelerinizle sohbet edebileceksiniz!",
+    payTitle: "Özel Sohbet Satın Al",
+    payIntro: "Özel sohbet için oturum başına 2€ ödemeniz gerekir.",
+    payOptions: "Bir ödeme yöntemi seçin:",
+    payWithPaypal: "PayPal ile Öde",
+    payWithBank: "Veya 2€ gönderin:",
+    bankDetails: "ASN Bank – NL91 SNSB 8833 7364 31 adına E. Yigit",
+    privacyNotice: "🛡️ Herkesin güvenliği için sohbetler güvenli şekilde saklanır. Kötüye kullanım engellenir."
+  },
+  ar: {
+    title: "تطبيق العلاقات المغربي التركي",
+    name: "الاسم",
+    age: "العمر",
+    gender: "الجنس (ذكر / أنثى)",
+    culture: "الأصل (تركي / مغربي)",
+    religion: "الدين (مثل الإسلام، سني، شيعي)",
+    intent: "النية (مثل الزواج، التعارف)",
+    message: "قدم نفسك بإيجاز...",
+    photo: "تحميل صورة الملف الشخصي",
+    submit: "إنشاء الملف الشخصي",
+    welcome: "مرحباً",
+    profileCreated: "تم إنشاء ملفك الشخصي.",
+    intentInfo: "نيتك هي",
+    cultureInfo: "أصلك هو",
+    matchesSoon: "إليك بعض الملفات التي قد تناسبك:",
+    chatIntro: "ستتمكن قريبًا من الدردشة مع المطابقات الخاصة بك!",
+    payTitle: "شراء محادثة خاصة",
+    payIntro: "للوصول إلى المحادثة الخاصة، ادفع 2 يورو لكل جلسة.",
+    payOptions: "اختر طريقة الدفع:",
+    payWithPaypal: "ادفع عبر PayPal",
+    payWithBank: "أو قم بالتحويل إلى:",
+    bankDetails: "ASN Bank – NL91 SNSB 8833 7364 31 باسم E. Yigit",
+    privacyNotice: "🛡️ من أجل أمان الجميع، يتم حفظ المحادثات بأمان. سيتم التعامل مع أي إساءة."
+  }
+};
+
+export default function Home() {
+  const [language, setLanguage] = useState("nl");
+  const t = translations[language];
+
+  const [profile, setProfile] = useState({
+    name: "",
+    age: "",
+    gender: "",
+    culture: "",
+    religion: "",
+    intent: "",
+    message: "",
+    photo: null,
+  });
+
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    if (name === "photo") {
+      setProfile({ ...profile, photo: files[0] });
+    } else {
+      setProfile({ ...profile, [name]: value });
+    }
+  };
+
+  const handleSubmit = () => {
+    setSubmitted(true);
+  };
+
+  const sampleMatches = [
+    { name: "Amina", age: 27, culture: "Marokkaans" },
+    { name: "Yusuf", age: 30, culture: "Turks" },
+    { name: "Fatima", age: 25, culture: "Marokkaans" }
+  ];
+
+  return (
+    <div className="max-w-xl mx-auto p-4 bg-gradient-to-b from-green-600 to-red-600 min-h-screen text-white rounded-xl shadow-xl">
+      <Tabs defaultValue="nl" onValueChange={setLanguage} className="mb-4">
+        <TabsList>
+          <TabsTrigger value="nl">🇳🇱 Nederlands</TabsTrigger>
+          <TabsTrigger value="tr">🇹🇷 Türkçe</TabsTrigger>
+          <TabsTrigger value="ar">🇲🇦 عربي</TabsTrigger>
+        </TabsList>
+      </Tabs>
+
+      {/* Logo */}
+      <div className="flex justify-center mb-4">
+        <img
+          src="/biz-logo.png"
+          alt="BIZ Logo"
+          className="h-20 w-auto"
+        />
+      </div>
+
+      <h1 className="text-2xl font-bold mb-4 text-center">{t.title}</h1>
+
+      {!submitted ? (
+        <Card className="space-y-4 bg-white text-black">
+          <CardContent className="space-y-2">
+            <Input
+              placeholder={t.name}
+              name="name"
+              value={profile.name}
+              onChange={handleChange}
+            />
+            <Input
+              placeholder={t.age}
+              name="age"
+              type="number"
+              value={profile.age}
+              onChange={handleChange}
+            />
+            <Input
+              placeholder={t.gender}
+              name="gender"
+              value={profile.gender}
+              onChange={handleChange}
+            />
+            <Input
+              placeholder={t.culture}
+              name="culture"
+              value={profile.culture}
+              onChange={handleChange}
+            />
+            <Input
+              placeholder={t.religion}
+              name="religion"
+              value={profile.religion}
+              onChange={handleChange}
+            />
+            <Input
+              placeholder={t.intent}
+              name="intent"
+              value={profile.intent}
+              onChange={handleChange}
+            />
+            <Textarea
+              placeholder={t.message}
+              name="message"
+              value={profile.message}
+              onChange={handleChange}
+            />
+            <div>
+              <label className="block text-sm mb-1">{t.photo}</label>
+              <Input
+                type="file"
+                name="photo"
+                accept="image/*"
+                onChange={handleChange}
+              />
+            </div>
+            <Button className="w-full bg-green-700 text-white" onClick={handleSubmit}>
+              {t.submit}
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="text-center space-y-4">
+          <h2 className="text-xl font-semibold">
+            {t.welcome}, {profile.name}!
+          </h2>
+          <p>
+            {t.profileCreated} {t.intentInfo} <strong>{profile.intent}</strong> {t.cultureInfo} <strong>{profile.culture}</strong>.
+          </p>
+          <p>{t.matchesSoon}</p>
+
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 mt-4">
+            {sampleMatches.map((match, idx) => (
+              <div key={idx} className="bg-white text-black rounded-lg p-3 shadow">
+                <p className="font-bold">{match.name}</p>
+                <p>{match.age} jaar - {match.culture}</p>
+                <Button className="mt-2 w-full" disabled>🔒 Chat (betaald)</Button>
+              </div>
+            ))}
+          </div>
+
+          <p className="italic text-white/80 mt-4">{t.chatIntro}</p>
+
+          <div className="mt-6 p-4 bg-white text-black rounded-lg">
+            <h3 className="text-lg font-bold mb-2">{t.payTitle}</h3>
+            <p>{t.payIntro}</p>
+            <p className="mt-2">{t.payOptions}</p>
+            <div className="mt-2">
+              <a
+                href="https://www.paypal.me/EYIGIT/2"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 underline"
+              >
+                {t.payWithPaypal}
+              </a>
+              <p className="mt-2">{t.payWithBank}</p>
+              <p className="font-semibold">{t.bankDetails}</p>
+            </div>
+            <p className="text-xs text-gray-600 mt-4 italic">{t.privacyNotice}</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
